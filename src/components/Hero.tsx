@@ -1,8 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import { TiLocationArrow } from "react-icons/ti";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
 	const [currentIndex, setCurrentIndex] = useState(1);
@@ -25,6 +28,12 @@ export default function Hero() {
 	const getVideoSrc = (index: number) => {
 		return `/videos/hero-${index}.mp4`;
 	};
+
+	useEffect(() => {
+		if (loadedVideo === totalVideos - 1) {
+			setIsLoading(false);
+		}
+	}, [loadedVideo]);
 
 	useGSAP(
 		() => {
@@ -72,7 +81,16 @@ export default function Hero() {
 		setLoadedVideo((prev) => prev + 1);
 	};
 	return (
-		<div className='h-dvh'>
+		<div className='relative h-dvh w-screen overflow-x-hidden'>
+			{isLoading && (
+				<div className='flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50'>
+					<div className='three-body'>
+						<div className='three-body__dot'></div>
+						<div className='three-body__dot'></div>
+						<div className='three-body__dot'></div>
+					</div>
+				</div>
+			)}
 			<div
 				id='video-container'
 				className='h-dvh relative  z-10 w-screen overflow-hidden'>
