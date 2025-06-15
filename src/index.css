@@ -75,7 +75,7 @@ body {
 
 @utility special-font {
 	b {
-		font-family: "Zentry";
+		font-family: var(--font-zentry);
 		font-feature-settings: "ss01" on;
 	}
 }

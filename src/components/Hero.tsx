@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import Button from "./Button";
+import { TiLocationArrow } from "react-icons/ti";
 
 export default function Hero() {
 	const [currentIndex, setCurrentIndex] = useState(1);
@@ -28,7 +30,7 @@ export default function Hero() {
 		<div className='h-dvh'>
 			<div
 				id='video-container'
-				className='h-dvh relative border-hsla z-10 w-screen overflow-hidden'>
+				className='h-dvh relative  z-10 w-screen overflow-hidden'>
 				<div>
 					<div className='mask-clip-path absolute-center z-50 size-64 cursor-pointer overflow-hidden rounded-lg'>
 						<div
@@ -48,9 +50,45 @@ export default function Hero() {
 					<video
 						ref={nextVideoRef}
 						src={getVideoSrc(currentIndex)}
+						loop
+						muted
+						id='next-video'
+						className='absolute-center invisible z-20 size-64 object-cover object-center'
+						onLoadedData={handleVideoLoaded}
 					/>
+					<video
+						src={getVideoSrc(currentIndex)}
+						onLoadedData={handleVideoLoaded}
+						autoPlay
+						loop
+						muted
+						className='absolute left-0 top-0 size-full object-cover object-center'
+					/>
+					<h1 className='special-font hero-heading absolute bottom-5 right-5 z-40 text-blue-75'>
+						G<b>a</b>ming
+					</h1>
+					<div className='absolute left-0 top-0 z-40 size-full'>
+						<div className='mt-24 px-5 sm:px-10'>
+							<h1 className='special-font hero-heading text-blue-100'>
+								redefi<b>m</b>e
+							</h1>
+							<p className='mb-5 max-w-64 font-robert-regular text-blue-100'>
+								Enter the Metagame Layer <br />
+								Unleash the Play Economy
+							</p>
+							<Button
+								id='watch-trailer'
+								title='Watch Trailer'
+								leftIcon={<TiLocationArrow />}
+								containerClass='bg-yellow-300'
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
+			<h1 className='special-font hero-heading absolute bottom-5 right-5  text-black'>
+				G<b>a</b>ming
+			</h1>
 		</div>
 	);
 }
