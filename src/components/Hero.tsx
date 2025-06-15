@@ -49,6 +49,25 @@ export default function Hero() {
 		{ dependencies: [currentIndex], revertOnUpdate: true }
 	);
 
+	useGSAP(() => {
+		gsap.set("#video-container", {
+			clipPath: "polygon(14% 0%, 72% 0%, 90% 90%, 0% 100%)",
+			borderRadius: "0 0 40% 10%",
+		});
+		gsap.from("#video-container", {
+			clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+			borderRadius: "0 0 0 0%",
+			duration: 1,
+			ease: "power1.inOut",
+			scrollTrigger: {
+				trigger: "#video-container",
+				start: "center center",
+				end: "bottom center",
+				scrub: true,
+			},
+		});
+	}, {});
+
 	const handleVideoLoaded = () => {
 		setLoadedVideo((prev) => prev + 1);
 	};
