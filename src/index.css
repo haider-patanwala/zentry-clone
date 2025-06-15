@@ -6,13 +6,15 @@
 	--font-robert-medium: "robert-medium", sans-serif;
 	--font-zentry: "zentry-regular", sans-serif;
 	--font-circular-web: "circular-web", sans-serif;
-}
 
-body {
-	font-family: var(--font-general);
-	width: 100dvw;
-	background-color: #dfdff0;
-	overflow-x: hidden;
+	--color-blue-50: #dfdff0;
+	--color-blue-75: #dfdff2;
+	--color-blue-100: #f0f2fa;
+	--color-blue-200: #010101;
+	--color-blue-300: #4fb7dd;
+	--color-violet-300: #5724ff;
+	--color-yellow-100: #8e983f;
+	--color-yellow-300: #edff66;
 }
 
 @font-face {
@@ -38,4 +40,11 @@ body {
 @font-face {
 	font-family: "zentry-regular";
 	src: url("/fonts/zentry-regular.woff2") format("woff2");
+}
+
+body {
+	font-family: var(--font-general);
+	width: 100dvw;
+	background-color: #dfdff0;
+	overflow-x: hidden;
 }
