@@ -1,3 +1,9 @@
+import Hero from "./components/Hero";
+
 export default function App() {
-	return <div className='text-red-500'>App</div>;
+	return (
+		<main className='relative min-h-dvh w-dvw overflow-x-hidden'>
+			<Hero />
+		</main>
+	);
 }
