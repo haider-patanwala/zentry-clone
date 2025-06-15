@@ -45,6 +45,6 @@
 body {
 	font-family: var(--font-general);
 	width: 100dvw;
-	background-color: #dfdff0;
+	background-color: var(--color-blue-50);
 	overflow-x: hidden;
 }
