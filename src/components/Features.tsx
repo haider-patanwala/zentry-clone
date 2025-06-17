@@ -1,10 +1,7 @@
 export default function Features() {
 	return (
 		<section className='bg-black pb-52'>
-			<div
-				className='
-    container mx-auto px-3 md:px-3'>
-				{" "}
+			<div className='container mx-auto px-3 md:px-3'>
 				<div className='px-5 py-32'>
 					<p className='font-circular-web text-lg text-blue-50'>
 						Into the Metagame Layer
@@ -16,8 +13,61 @@ export default function Features() {
 					</p>
 				</div>
 				{/* ============Bento Grid============ */}
-				<div className='border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]'></div>
+				<div className='border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]'>
+					<BentoCard
+						src='/videos/feature-1.mp4'
+						title={
+							<>
+								radi<b>n</b>t
+							</>
+						}
+						description='A cross-platform metagame app, turning your activities across Web2 and Web3 games into a rewarding adventure.'
+					/>
+					<div className='grid min-h-[135vh] grid-cols-2 grid-rows-3'>
+						<div className='bento-tilt_1 row-span-1 md:col-span-1 md:row-span-2'>
+							<BentoCard
+								src='/videos/feature-2.mp4'
+								title={
+									<>
+										zig<b>m</b>a
+									</>
+								}
+								description='An anime and gaming-inspired NFT collection - the IP primed for expansion.'
+							/>
+						</div>
+					</div>
+				</div>
 			</div>
 		</section>
+	);
+}
+
+function BentoCard({
+	src,
+	title,
+	description,
+}: {
+	src: string;
+	title: React.ReactNode;
+	description?: string;
+}) {
+	return (
+		<div className='relative size-full'>
+			<video
+				src={src}
+				loop
+				muted
+				autoPlay
+				className='absolute left-0 top-0 object-cover object-center'
+			/>
+			<div className='relative z-10 flex size-full flex-col justify-between p-5 text-blue-50'>
+				<div>
+					<h1 className='bento-title special-font'>{title}</h1>
+					{description && (
+						<p className='mt-3 max-w-64 text-xs md:text-base'>{description}</p>
+					)}
+				</div>
+			</div>
+		</div>
 	);
 }
