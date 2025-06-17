@@ -1,11 +1,41 @@
 import { TiLocationArrow } from "react-icons/ti";
 import Button from "./Button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useScrollPosition } from "react-haiku";
+import gsap from "gsap";
 
 export default function NavBar() {
 	const [isIndicatorLineVisible, setIsIndicatorLineVisible] = useState(false);
 	const NavContainerRef = useRef<HTMLDivElement>(null);
 	const audioElementRef = useRef<HTMLAudioElement>(null);
+	const [prevScrollY, setPrevScrollY] = useState(0);
+	const [isNavVisible, setIsNavVisible] = useState(true);
+	const [scroll] = useScrollPosition();
+	const { y: currentScrollPosition } = scroll as { y: number };
+
+	useEffect(() => {
+		if (currentScrollPosition === 0) {
+			setIsNavVisible(true);
+			NavContainerRef.current?.classList.remove("floating-nav");
+		} else if (currentScrollPosition > prevScrollY) {
+			setIsNavVisible(false);
+			NavContainerRef.current?.classList.add("floating-nav");
+		} else if (currentScrollPosition < prevScrollY) {
+			setIsNavVisible(true);
+			NavContainerRef.current?.classList.add("floating-nav");
+		}
+		setPrevScrollY(currentScrollPosition || 0);
+	}, [currentScrollPosition]);
+
+	useEffect(() => {
+		gsap.to(NavContainerRef.current, {
+			y: isNavVisible ? 0 : -100,
+			opacity: isNavVisible ? 1 : 0,
+			duration: 0.2,
+			ease: "back.inOut",
+		});
+	}, [isNavVisible]);
+
 	const toggleAudio = () => {
 		setIsIndicatorLineVisible(!isIndicatorLineVisible);
 		if (audioElementRef.current) {
