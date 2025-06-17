@@ -8,7 +8,8 @@ import { ScrollTrigger } from "gsap/all";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
-	const [currentIndex, setCurrentIndex] = useState(1);
+	const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+	const [nextIndex, setNextIndex] = useState(1);
 	const [hasClicked, setHasClicked] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadedVideo, setLoadedVideo] = useState(0);
@@ -16,13 +17,24 @@ export default function Hero() {
 	const totalVideos = 4;
 	const nextVideoRef = useRef<HTMLVideoElement>(null);
 
-	const nextVideoIndex = currentIndex === totalVideos ? 1 : currentIndex + 1;
+	const nextVideoIndex =
+		currentIndex === totalVideos ? 1 : (currentIndex || 1) + 1;
 
 	const hanldeMiniVdClick = () => {
 		setHasClicked(true);
-
 		setCurrentIndex(nextVideoIndex);
 	};
+
+	useEffect(() => {
+		if (currentIndex !== null) {
+			setTimeout(() => {
+				setNextIndex(nextVideoIndex);
+			}, 30000);
+		} else if (currentIndex === null) {
+			setNextIndex(1);
+		}
+	}, [currentIndex]);
+
 	console.log(currentIndex);
 
 	const getVideoSrc = (index: number) => {
@@ -30,30 +42,37 @@ export default function Hero() {
 	};
 
 	useEffect(() => {
-		if (loadedVideo === totalVideos - 1) {
+		if (loadedVideo === totalVideos - 2) {
 			setIsLoading(false);
 		}
 	}, [loadedVideo]);
 
 	useGSAP(
 		() => {
-			gsap.set("#next-video", { visibility: "visible" });
-			gsap.to("#next-video", {
-				transformOrigin: "center center",
-				scale: 1,
-				width: "100%",
-				height: "100%",
-				duration: 1,
-				ease: "power.inOut",
-				onStart: () => nextVideoRef.current.play(),
-			});
+			if (currentIndex !== null) {
+				// Skip initial load
+				gsap.set("#next-video", { visibility: "visible" });
+				gsap.to("#next-video", {
+					transformOrigin: "center center",
+					scale: 1,
+					width: "100%",
+					height: "100%",
+					duration: 1,
+					ease: "power.inOut",
+					onStart: () => {
+						if (nextVideoRef.current) {
+							nextVideoRef.current.play();
+						}
+					},
+				});
 
-			gsap.from("#current-video", {
-				transformOrigin: "center center",
-				scale: 0,
-				duration: 1.5,
-				ease: "power1.inOut",
-			});
+				gsap.from("#current-video", {
+					transformOrigin: "center center",
+					scale: 0,
+					duration: 1.5,
+					ease: "power1.inOut",
+				});
+			}
 		},
 		{ dependencies: [currentIndex], revertOnUpdate: true }
 	);
@@ -112,7 +131,7 @@ export default function Hero() {
 					</div>
 					<video
 						ref={nextVideoRef}
-						src={getVideoSrc(currentIndex)}
+						src={getVideoSrc(currentIndex || 1)}
 						loop
 						muted
 						id='next-video'
@@ -120,7 +139,7 @@ export default function Hero() {
 						onLoadedData={handleVideoLoaded}
 					/>
 					<video
-						src={getVideoSrc(currentIndex)}
+						src={getVideoSrc(nextIndex)}
 						onLoadedData={handleVideoLoaded}
 						autoPlay
 						loop
