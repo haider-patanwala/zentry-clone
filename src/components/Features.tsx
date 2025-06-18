@@ -1,4 +1,6 @@
 import { TiLocationArrow } from "react-icons/ti";
+import { cn } from "../lib/cn";
+import { useRef, useState, type MouseEvent } from "react";
 
 export default function Features() {
 	return (
@@ -15,7 +17,7 @@ export default function Features() {
 					</p>
 				</div>
 				{/* ============Bento Grid============ */}
-				<div className='border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]'>
+				<BentoTilt className='border-hsla relative mb-7 h-96 w-full overflow-hidden rounded-md md:h-[65vh]'>
 					<BentoCard
 						src='/videos/feature-1.mp4'
 						title={
@@ -25,9 +27,9 @@ export default function Features() {
 						}
 						description='A cross-platform metagame app, turning your activities across Web2 and Web3 games into a rewarding adventure.'
 					/>
-				</div>
+				</BentoTilt>
 				<div className='grid min-h-[135vh] gap-5 grid-cols-2 grid-rows-3'>
-					<div className='bento-tilt_1 row-span-1 md:col-span-1 md:row-span-2'>
+					<BentoTilt className='bento-tilt_1 row-span-1 md:col-span-1 md:row-span-2'>
 						<BentoCard
 							src='/videos/feature-2.mp4'
 							title={
@@ -37,8 +39,8 @@ export default function Features() {
 							}
 							description='An anime and gaming-inspired NFT collection - the IP primed for expansion.'
 						/>
-					</div>
-					<div className='bento-tilt_1 row-span-1 ms-32 md:col-span-1 md:ms-0'>
+					</BentoTilt>
+					<BentoTilt className='bento-tilt_1 row-span-1 ms-32 md:col-span-1 md:ms-0'>
 						<BentoCard
 							src='/videos/feature-3.mp4'
 							title={
@@ -49,8 +51,8 @@ export default function Features() {
 							description='A gamified social hub, adding a new
 dimension of play to social interaction for Web3 communities.'
 						/>
-					</div>
-					<div className='bento-tilt_1 me-14 md:col-span-1 md:me-0'>
+					</BentoTilt>
+					<BentoTilt className='bento-tilt_1 me-14 md:col-span-1 md:me-0'>
 						<BentoCard
 							src='/videos/feature-4.mp4'
 							title={
@@ -61,7 +63,7 @@ dimension of play to social interaction for Web3 communities.'
 							description='A cross-world AI Agent - elevating your
 gameplay to be more fun and productive.'
 						/>
-					</div>
+					</BentoTilt>
 					<div className='bento-tilt_2'>
 						<div className='flex size-full flex-col justify-between bg-violet-300 p-5'>
 							<h1 className='bento-title special-font max-w-64 text-black'>
@@ -111,6 +113,49 @@ function BentoCard({
 					)}
 				</div>
 			</div>
+		</div>
+	);
+}
+
+function BentoTilt({
+	children,
+	className,
+}: {
+	children: React.ReactNode;
+	className?: string;
+}) {
+	const [transformStyle, setTransformStyle] = useState("");
+	const itemRef = useRef(null);
+
+	const handleMouseMove = (e: MouseEvent<HTMLDivElement, MouseEvent>) => {
+		if (!itemRef.current) return;
+
+		const { left, top, width, height } =
+			itemRef.current.getBoundingClientRect() as DOMRect;
+
+		const relativeX = (e.clientX - left) / width;
+		const relativeY = (e.clientY - top) / height;
+		const xRotation = relativeY * 10;
+		const yRotation = relativeX * 10;
+
+		setTransformStyle(
+			`perspective(1000px) rotateX(${
+				e.clientY / window.innerHeight - 0.5
+			}turn) rotateY(${e.clientX / window.innerWidth - 0.5}turn)`
+		);
+	};
+	const handleMouseLeave = () => {
+		setTransformStyle("");
+	};
+
+	return (
+		<div
+			ref={itemRef}
+			onMouseMove={handleMouseMove}
+			onMouseLeave={handleMouseLeave}
+			style={{ transform: transformStyle }}
+			className={cn("", className)}>
+			{children}
 		</div>
 	);
 }
