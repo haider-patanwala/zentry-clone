@@ -10,7 +10,6 @@ gsap.registerPlugin(ScrollTrigger);
 export default function Hero() {
 	const [currentIndex, setCurrentIndex] = useState<number | null>(null);
 	const [nextIndex, setNextIndex] = useState(1);
-	const [hasClicked, setHasClicked] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadedVideo, setLoadedVideo] = useState(0);
 
@@ -21,7 +20,6 @@ export default function Hero() {
 		currentIndex === totalVideos ? 1 : (currentIndex || 1) + 1;
 
 	const hanldeMiniVdClick = () => {
-		setHasClicked(true);
 		setCurrentIndex(nextVideoIndex);
 	};
 
