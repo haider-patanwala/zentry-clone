@@ -8,10 +8,16 @@ export default defineConfig({
 	server: {
 		port: 3000,
 		host: true,
+		headers: {
+			"Cache-Control": "public, max-age=6000, s-maxage=6000",
+		},
 	},
 	preview: {
 		port: 3000,
 		host: true,
 		allowedHosts: ["localhost", "127.0.0.1", "0.0.0.0", "zentry.haider.sh"],
+		headers: {
+			"Cache-Control": "public, max-age=6000, s-maxage=6000",
+		},
 	},
 });
