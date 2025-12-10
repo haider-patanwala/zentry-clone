@@ -15,6 +15,8 @@ export default function Hero() {
 
 	const totalVideos = 4;
 	const nextVideoRef = useRef<HTMLVideoElement>(null);
+	const currentVideoRef = useRef<HTMLVideoElement>(null);
+	const backgroundVideoRef = useRef<HTMLVideoElement>(null);
 
 	const nextVideoIndex =
 		currentIndex === totalVideos ? 1 : (currentIndex || 1) + 1;
@@ -25,13 +27,19 @@ export default function Hero() {
 
 	useEffect(() => {
 		if (currentIndex !== null) {
-			setTimeout(() => {
-				setNextIndex(nextVideoIndex);
+			const timer = setTimeout(() => {
+				const nextIdx = currentIndex === totalVideos ? 1 : currentIndex + 1;
+				setNextIndex(nextIdx);
 			}, 30000);
-		} else if (currentIndex === null) {
-			setNextIndex(1);
+			return () => clearTimeout(timer);
+		} else {
+			// Defer state update to avoid synchronous setState in effect
+			const timer = setTimeout(() => {
+				setNextIndex(1);
+			}, 0);
+			return () => clearTimeout(timer);
 		}
-	}, [currentIndex]);
+	}, [currentIndex, totalVideos]);
 
 	console.log(currentIndex);
 
@@ -39,11 +47,39 @@ export default function Hero() {
 		return `/videos/hero-${index}.mp4`;
 	};
 
+	// Handle video loading - at minimum, we need the background video to load
 	useEffect(() => {
-		if (loadedVideo === totalVideos - 2) {
-			setIsLoading(false);
+		// Wait for at least the background video (most important) to load
+		// Or if we've loaded 2+ videos, that's enough to show content
+		if (loadedVideo >= 1 && isLoading) {
+			// Defer state update to avoid synchronous setState in effect
+			setTimeout(() => {
+				setIsLoading(false);
+			}, 0);
 		}
-	}, [loadedVideo]);
+	}, [loadedVideo, isLoading]);
+
+	// Timeout fallback - if videos don't load within 10 seconds, show content anyway
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			if (isLoading) {
+				console.warn("Video loading timeout - showing content anyway");
+				setIsLoading(false);
+			}
+		}, 10000);
+
+		return () => clearTimeout(timeout);
+	}, [isLoading]);
+
+	const handleVideoLoaded = () => {
+		setLoadedVideo((prev) => prev + 1);
+	};
+
+	const handleVideoError = (index: number) => {
+		console.error(`Failed to load video: hero-${index}.mp4`);
+		// Still increment loaded count to prevent infinite loading
+		setLoadedVideo((prev) => prev + 1);
+	};
 
 	useGSAP(
 		() => {
@@ -94,13 +130,10 @@ export default function Hero() {
 		});
 	}, {});
 
-	const handleVideoLoaded = () => {
-		setLoadedVideo((prev) => prev + 1);
-	};
 	return (
 		<div className='relative h-dvh w-screen overflow-x-hidden'>
 			{isLoading && (
-				<div className='flex-center absolute z-[100] h-dvh w-screen overflow-hidden bg-violet-50'>
+				<div className='flex-center absolute z-100 h-dvh w-screen overflow-hidden bg-violet-50'>
 					<div className='three-body'>
 						<div className='three-body__dot'></div>
 						<div className='three-body__dot'></div>
@@ -117,13 +150,15 @@ export default function Hero() {
 							onClick={hanldeMiniVdClick}
 							className='origin-center scale-50 opacity-0 transition-all duration-500 ease-in hover:scale-100 hover:opacity-100'>
 							<video
-								ref={nextVideoRef}
+								ref={currentVideoRef}
 								className='size-64 scale-150 object-cover object-center'
 								src={getVideoSrc(nextVideoIndex)}
 								loop
 								muted
 								id='current-video'
 								onLoadedData={handleVideoLoaded}
+								onError={() => handleVideoError(nextVideoIndex)}
+								preload='metadata'
 							/>
 						</div>
 					</div>
@@ -135,14 +170,20 @@ export default function Hero() {
 						id='next-video'
 						className='absolute-center invisible z-20 size-64 object-cover object-center'
 						onLoadedData={handleVideoLoaded}
+						onError={() => handleVideoError(currentIndex || 1)}
+						preload='metadata'
 					/>
 					<video
+						ref={backgroundVideoRef}
 						src={getVideoSrc(nextIndex)}
 						onLoadedData={handleVideoLoaded}
+						onError={() => handleVideoError(nextIndex)}
 						autoPlay
 						loop
 						muted
+						playsInline
 						className='absolute left-0 top-0 size-full object-cover object-center'
+						preload='auto'
 					/>
 					<h1 className='special-font hero-heading absolute bottom-5 right-5 z-40 text-blue-75'>
 						G<b>a</b>ming
