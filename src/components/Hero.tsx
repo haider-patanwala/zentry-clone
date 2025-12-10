@@ -44,7 +44,7 @@ export default function Hero() {
 	console.log(currentIndex);
 
 	const getVideoSrc = (index: number) => {
-		return `/videos/hero-${index}.mp4`;
+		return `https://object.haider.sh/zentry/hero-${index}.mp4`;
 	};
 
 	// Handle video loading - at minimum, we need the background video to load
